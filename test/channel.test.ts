@@ -10,7 +10,10 @@ class Channel extends cdk.Construct {
     constructor(scope: cdk.Construct, id: string, props: ChannelProps) {
         super(scope, id);
         const api = new apigateway.RestApi(this, 'books-api');
-        api.root.addMethod('POST');
+        api.root.addMethod('GET');
+        if (!props.isReadOnly) {
+            api.root.addMethod('POST');
+        }
     }
 }
 
