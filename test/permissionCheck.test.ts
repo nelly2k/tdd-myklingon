@@ -1,5 +1,6 @@
 import * as cdk from '@aws-cdk/core';
 import '@aws-cdk/assert/jest';
+import * as iam from '@aws-cdk/aws-iam';
 import { SynthUtils } from '@aws-cdk/assert';
 
 describe('Given that scope is provided', () => {
@@ -18,7 +19,7 @@ describe('Given that scope is provided', () => {
 
             cdk.Aspects.of(stack).add(new PermissionCheck());
         
-            
+            expect(stack).toHaveWarning('Wildcard resources aren\'t allowed');
         });
     });
 });
@@ -26,7 +27,7 @@ describe('Given that scope is provided', () => {
 declare global {
     namespace jest {
       interface Matchers<R> {
-        toHaveError(message: string): R;
+        toHaveWarning(message: string): R;
       }
     }
 }
