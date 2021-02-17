@@ -1,4 +1,6 @@
-
+import * as cdk from '@aws-cdk/core';
+import '@aws-cdk/assert/jest';
+import * as iam from '@aws-cdk/aws-iam';
 
 describe('Given that scope is provided', () => {
     describe('When security policy is defined', () => {
