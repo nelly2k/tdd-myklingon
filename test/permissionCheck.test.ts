@@ -3,6 +3,12 @@ import '@aws-cdk/assert/jest';
 import * as iam from '@aws-cdk/aws-iam';
 import { SynthUtils } from '@aws-cdk/assert';
 
+class PermissionCheck implements cdk.IAspect {
+    visit(node: cdk.IConstruct): void {
+        cdk.Annotations.of(node).addWarning('Wildcard resources aren\'t allowed');
+    }
+}
+
 describe('Given that scope is provided', () => {
     describe('When security policy is defined', () => {
         test('and policy has a wildcard resource the warning is added', () => {
@@ -18,7 +24,7 @@ describe('Given that scope is provided', () => {
             }));
 
             cdk.Aspects.of(stack).add(new PermissionCheck());
-        
+
             expect(stack).toHaveWarning('Wildcard resources aren\'t allowed');
         });
     });
@@ -26,9 +32,9 @@ describe('Given that scope is provided', () => {
 
 declare global {
     namespace jest {
-      interface Matchers<R> {
-        toHaveWarning(message: string): R;
-      }
+        interface Matchers<R> {
+            toHaveWarning(message: string): R;
+        }
     }
 }
 
@@ -45,6 +51,6 @@ expect.extend({
 
         return {
             pass, message: () => output
-          }
+        }
     }
 });
