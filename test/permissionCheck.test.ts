@@ -3,8 +3,8 @@ import '@aws-cdk/assert/jest';
 import * as iam from '@aws-cdk/aws-iam';
 
 describe('Given that scope is provided', () => {
-    describe('When security policy is defined', () => {
-        test('and policy has a wildcard resource the warning is added', () => {
+    describe('When there is an allow policy', () => {
+        test('and no resource restrictions then warning is added', () => {
             const stack = new cdk.Stack();
 
             const role = new iam.Role(stack, 'myrole.iamrole', {
