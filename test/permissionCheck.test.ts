@@ -8,7 +8,8 @@ class PermissionCheck implements cdk.IAspect {
     visit(node: cdk.IConstruct): void {
         if (node instanceof iam.CfnPolicy) {
             var hasWildCardResource = node.policyDocument.statements
-                .some((x: any) => x.resource.some((r: any) => r == '*'));
+                .some((x: any) => x.effect == 'Allow'
+                    && x.resource.some((r: any) => r == '*'));
 
             if (hasWildCardResource) {
                 cdk.Annotations.of(node).addWarning('Wildcard resources aren\'t allowed')
