@@ -2,6 +2,7 @@ import * as cdk from '@aws-cdk/core';
 import '@aws-cdk/assert/jest';
 import * as iam from '@aws-cdk/aws-iam';
 import { SynthUtils } from '@aws-cdk/assert';
+import { Effect } from '@aws-cdk/aws-iam';
 
 class PermissionCheck implements cdk.IAspect {
     visit(node: cdk.IConstruct): void {
@@ -19,6 +20,7 @@ describe('Given that scope is provided', () => {
             });
 
             role.addToPolicy(new iam.PolicyStatement({
+                effect: Effect.ALLOW,
                 resources: ['*'],
                 actions: ['lambda:InvokeFunction'],
             }));
