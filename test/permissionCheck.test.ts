@@ -29,7 +29,25 @@ describe('Given that scope is provided', () => {
 
             expect(stack).toHaveWarning('Wildcard resources aren\'t allowed');
         });
+
+        test('and resource specified then not warning is added', () => {
+            const stack = new cdk.Stack();
+            const role = new iam.Role(stack, 'myrole.iamrole', {
+                assumedBy: new iam.ServicePrincipal('sns.amazonaws.com'),
+              });
+          
+            role.addToPolicy(new iam.PolicyStatement({
+                effect: Effect.ALLOW,
+                resources: ['mylambda'],
+                actions: ['lambda:InvokeFunction'],
+              }));
+          
+            cdk.Aspects.of(stack).add(new PermissionCheck());
+            
+            expect(stack).not.toHaveWarning('Wildcard resources aren\'t allowed');
+        })
     });
+    
 });
 
 declare global {
