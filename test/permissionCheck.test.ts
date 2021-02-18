@@ -6,11 +6,36 @@ import { Effect } from '@aws-cdk/aws-iam';
 
 class PermissionCheck implements cdk.IAspect {
     visit(node: cdk.IConstruct): void {
-        cdk.Annotations.of(node).addWarning('Wildcard resources aren\'t allowed');
+        if (node instanceof iam.CfnPolicy) {
+            var hasWildCardResource = node.policyDocument.statements
+                .some((x: any) => x.resource.some((r: any) => r == '*'));
+
+            if (hasWildCardResource) {
+                cdk.Annotations.of(node).addWarning('Wildcard resources aren\'t allowed')
+            }
+        }
     }
 }
 
 describe('Given that scope is provided', () => {
+    test('When there is a deny policy wildcard resource produce no warning', () => {
+        const stack = new cdk.Stack();
+
+        const role = new iam.Role(stack, 'myrole.iamrole', {
+            assumedBy: new iam.ServicePrincipal('sns.amazonaws.com'),
+        });
+
+        role.addToPolicy(new iam.PolicyStatement({
+            effect: Effect.DENY,
+            resources: ['*'],
+            actions: ['lambda:InvokeFunction'],
+        }));
+
+        cdk.Aspects.of(stack).add(new PermissionCheck());
+
+        expect(stack).not.toHaveWarning('Wildcard resources aren\'t allowed');
+    });
+
     describe('When there is an allow policy', () => {
         test('and no resource restrictions then warning is added', () => {
             const stack = new cdk.Stack();
@@ -34,20 +59,20 @@ describe('Given that scope is provided', () => {
             const stack = new cdk.Stack();
             const role = new iam.Role(stack, 'myrole.iamrole', {
                 assumedBy: new iam.ServicePrincipal('sns.amazonaws.com'),
-              });
-          
+            });
+
             role.addToPolicy(new iam.PolicyStatement({
                 effect: Effect.ALLOW,
                 resources: ['mylambda'],
                 actions: ['lambda:InvokeFunction'],
-              }));
-          
+            }));
+
             cdk.Aspects.of(stack).add(new PermissionCheck());
-            
+
             expect(stack).not.toHaveWarning('Wildcard resources aren\'t allowed');
         })
     });
-    
+
 });
 
 declare global {
