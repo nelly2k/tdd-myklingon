@@ -39,7 +39,9 @@ expect.extend({
         var pass = synthResult.messages
             .filter(x => x.level == 'warning')
             .some(x => x.entry.data == message);
-        const output = pass ? 'Template has expected error' : 'Temaplte doesn\'t have an expected error';
+        const output = pass ?
+            'Template has expected error'
+            : 'Temaplte doesn\'t have an expected error';
 
         return {
             pass, message: () => output
