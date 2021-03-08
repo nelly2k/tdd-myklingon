@@ -18,24 +18,6 @@ class PermissionCheck implements cdk.IAspect {
 }
 
 describe('Given that scope is provided', () => {
-
-    test('When there is a deny policy wildcard resource produce no warning', () => {
-        const stack = new cdk.Stack();
-
-        const role = new iam.Role(stack, 'myrole.iamrole', {
-            assumedBy: new iam.ServicePrincipal('sns.amazonaws.com'),
-        });
-
-        role.addToPolicy(new iam.PolicyStatement({
-            effect: Effect.DENY,
-            resources: ['*'],
-            actions: ['lambda:InvokeFunction'],
-        }));
-
-        cdk.Aspects.of(stack).add(new PermissionCheck());
-
-        expect(stack).not.toHaveWarning('Wildcard resources aren\'t allowed');
-    });
     describe('When there is an allow policy', () => {
         test('and no resource restrictions then warning is added', () => {
             const stack = new cdk.Stack();
